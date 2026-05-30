@@ -59,7 +59,7 @@ GROUP BY c.category_name
 ORDER BY revenue DESC;
 
 
--- Q11: Find top spending customer
+-- Q10: Find top spending customer
 SELECT Top 1 c.first_name, SUM(o.total_amount) AS total_spent
 FROM customer c
 JOIN orders o ON c.customer_id = o.customer_id
@@ -67,13 +67,13 @@ GROUP BY c.first_name
 ORDER BY total_spent DESC
 
  
--- Q12: Find products never ordered
+-- Q11: Find products never ordered
 SELECT p.product_name
 FROM products p
 LEFT JOIN order_items oi ON p.product_id = oi.product_id
 WHERE oi.product_id IS NULL;
  
--- Q13: Find monthly revenue
+-- Q12: Find monthly revenue
 SELECT
     MONTH(order_date) AS month,
     SUM(total_amount) AS monthly_revenue
@@ -81,14 +81,14 @@ FROM orders
 GROUP BY MONTH(order_date)
 ORDER BY month;
  
--- Q14: Find returned orders with customer details
+-- Q13: Find returned orders with customer details
 SELECT c.first_name, c.last_name, o.order_id, o.return_date
 FROM orders o
 JOIN customer c ON o.customer_id = c.customer_id
 WHERE o.return_date IS NOT NULL;
  
 
--- Q15: Rank customers by total spending using CTE
+-- Q14: Rank customers by total spending using CTE
 WITH customer_spending AS (
     SELECT c.customer_id,
            c.first_name,
@@ -102,7 +102,7 @@ DENSE_RANK() OVER (ORDER BY total_spent DESC) AS spending_rank
 FROM customer_spending;
  
 
--- Q16: Find failed payments with order details
+-- Q15: Find failed payments with order details
 SELECT o.order_id, c.first_name, p.payment_type, p.payment_status
 FROM payments p
 JOIN orders o ON p.order_id = o.order_id
@@ -110,7 +110,7 @@ JOIN customer c ON o.customer_id = c.customer_id
 WHERE p.payment_status = 'failed';
  
 
--- Q17: Find category with highest revenue using CTE
+-- Q16: Find category with highest revenue using CTE
 WITH category_revenue AS (
     SELECT c.category_name,
            SUM(oi.price * oi.quantity) AS revenue,
@@ -124,20 +124,20 @@ SELECT category_name, revenue
 FROM category_revenue
 WHERE rnk = 1;
  
--- Q18: Find customers who ordered more than average order amount
+-- Q17: Find customers who ordered more than average order amount
 SELECT c.first_name, o.total_amount
 FROM customer c
 JOIN orders o ON c.customer_id = o.customer_id
 WHERE o.total_amount > (SELECT AVG(total_amount) FROM orders);
  
--- Q19: Find most popular payment method
+-- Q18: Find most popular payment method
 SELECT TOP 1 payment_type, COUNT(*) AS total_payments
 FROM payments
 GROUP BY payment_type
 ORDER BY total_payments DESC
 
 
--- Q20: Find low stock products (less than 60 items)
+-- Q19: Find low stock products (less than 60 items)
 SELECT product_name, stock_quantity
 FROM products
 WHERE stock_quantity < 60
